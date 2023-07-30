@@ -1,5 +1,6 @@
 import json
 import yaml
+import os
 
 
 def dbt_profile(project_id):
@@ -30,12 +31,14 @@ def setup_gcp_auth(path, gcp_auth_key):
 
 
 def setup_dbt_auth(path, project_id):
-    with open(path, "w") as outfile:
+    if not os.path.exists(path):
+        os.makedirs(path)
+    with open(path + "/profiles.yml", "w") as outfile:
         yaml.dump(dbt_profile(project_id), outfile, sort_keys=False)
 
 
 gcp_path = "/root/.config/gcloud/application_default_credentials.json"
-dbt_path = "/root/.dbt/profiles.yml"
+dbt_path = "/root/.dbt"
 gcp_auth_key = <<gcp_auth>>
 PROJECT_ID = setup_gcp_auth(gcp_path, gcp_auth_key)
 setup_dbt_auth(dbt_path, PROJECT_ID)
